@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html>
-  <head lang="en">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Weather API</title>
-    <link rel="stylesheet" href="/screen.css">
-  </head>
-  <body>
-    <h1>Hello, World!</h1>
-    <script src="/main.js" charset="utf-8"></script>
-  </body>
+
+<head lang="en">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Weather API</title>
+  <link rel="stylesheet" href="/screen.css">
+</head>
+
+<body>
+  <h1>Weather API</h1>
+  <section class="city-or-zip-code-container">
+    <h6>Please enter a City or a Zip Code: </h6>
+    <input type="text" class="input" placeholder="Enter city or zip code:">
+    <button class="get-city-or-zip">Search</button>
+  </section>
+  <br>
+  <section class="lat-and-lon-container">
+    <button class="get-lat-and-lon">Get your location!</button>
+  </section>
+  <ul class="weather-output"></ul>
+  <script src="/main.js" charset="utf-8"></script>
+</body>
+
 </html>

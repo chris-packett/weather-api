@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "deploy": "surge ./public --domain weather-api.chris.surge.sh",
+    "deploy": "surge ./public --domain weather-api.chris-sdg.surge.sh",
     "start": "browser-sync start --server \"public\" --files \"public\""
   },
   "dependencies": {
