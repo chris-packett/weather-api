@@ -25,6 +25,29 @@ const craftURL = () => {
   }
 }
 
+const populateOnPageLoad = () => {
+  const _last_query = localStorage.getItem('last_query')
+  const _baseURL = 'http://api.openweathermap.org/data/2.5/weather?'
+  const _city_or_zip_parameter = 'q='
+  const _fahrenheit_units = '&units=imperial'
+  let _last_fetch_url = _baseURL + _city_or_zip_parameter + _last_query + _fahrenheit_units + APP_ID
+
+  fetch(_last_fetch_url)
+  .then((res) => res.json())
+  .then((data) => {
+    const tempInF = data.main.temp
+    const secondsTillSunset = data.sys.sunset - data.dt
+    const hoursTillSunset = Math.floor(secondsTillSunset / SECONDS_IN_AN_HOUR)
+    const minutesTillSunset = Math.floor(((secondsTillSunset / SECONDS_IN_AN_HOUR) - hoursTillSunset) * MINUTES_IN_AN_HOUR)
+    let previousEntryMessage = "Below is information based on your last visit!"
+    let temperatureMessage = `Temperature in Fahrenheit: ${tempInF}`
+    let sunsetMessage = `Time until sunset: ${hoursTillSunset} hours, ${minutesTillSunset} minutes`
+    addContentToUl(previousEntryMessage)
+    addContentToUl(temperatureMessage)
+    addContentToUl(sunsetMessage)
+  })
+}
+
 const addContentToUl = (message) => {
   let weatherOutputParent = document.querySelector('.weather-output')
   let _li = document.createElement('li')
@@ -67,6 +90,7 @@ const showPosition = (position) => {
   isCityOrZip = true
 }
 
+document.addEventListener('DOMContentLoaded', populateOnPageLoad)
 document.querySelector('.get-city-or-zip').addEventListener('click', searchAPI)
 document.querySelector('.get-lat-and-lon').addEventListener('click', getLocation)
 
