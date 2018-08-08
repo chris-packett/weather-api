@@ -35,8 +35,9 @@ const searchAPI = (params) => {
       const minutesTillSunset = Math.floor(((secondsTillSunset / 3600) - hoursTillSunset) * 60)
       let temperatureMessage = `Temperature in Fahrenheit: ${tempInF}`
       let sunsetMessage = `Time until sunset: ${hoursTillSunset} hours, ${minutesTillSunset} minutes`
-      addContentToUl(temperatureMessage)
-      addContentToUl(sunsetMessage)
+      const allMessages = new DOMInteraction()
+      allMessages.addContentToUl(temperatureMessage)
+      allMessages.addContentToUl(sunsetMessage)
 
     })
 }
@@ -60,19 +61,20 @@ const populateOnPageLoad = () => {
         let previousEntryMessage = `Below is information for ${nameOfPlace} based on your last visit!`
         let temperatureMessage = `Temperature in Fahrenheit: ${tempInF}`
         let sunsetMessage = `Time until sunset: ${hoursTillSunset} hours, ${minutesTillSunset} minutes`
-        addContentToUl(previousEntryMessage)
-        addContentToUl(temperatureMessage)
-        addContentToUl(sunsetMessage)
+        const allMessages = new DOMInteraction()
+        allMessages.addContentToUl(previousEntryMessage)
+        allMessages.addContentToUl(temperatureMessage)
+        allMessages.addContentToUl(sunsetMessage)
       })
   }
 }
 
-const addContentToUl = (message) => {
-  let weatherOutputParent = document.querySelector('.weather-output')
-  let _li = document.createElement('li')
-  _li.textContent = message
-  weatherOutputParent.appendChild(_li)
-}
+// const addContentToUl = (message) => {
+//   let weatherOutputParent = document.querySelector('.weather-output')
+//   let _li = document.createElement('li')
+//   _li.textContent = message
+//   weatherOutputParent.appendChild(_li)
+// }
 
 class Geolocation {
   getLocation() {
@@ -96,20 +98,27 @@ class UserInput {
 }
 
 class UrlStructure {
-  
+
 }
 
 class DOMInteraction {
 
+
+  addContentToUl (message) {
+    let weatherOutputParent = document.querySelector('.weather-output')
+    let _li = document.createElement('li')
+    _li.textContent = message
+    weatherOutputParent.appendChild(_li)
+  }
 }
 
 const getUserLocation = () => {
-  const userLocation = new Geolocation
+  const userLocation = new Geolocation()
   userLocation.getLocation()
 }
 
 const getUserInput = () => {
-  const userLocation = new UserInput
+  const userLocation = new UserInput()
   userLocation.getLocation()
 }
 
