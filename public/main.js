@@ -3,31 +3,6 @@ let LAT
 let LON
 let FETCH_URL
 
-/*
- * @param {} params - defines what url to create
- */
-// const searchAPI = (params) => {
-//   params = params || { isCityOrZip: true }
-//   const newSearch = new Search()
-//   fetch(newSearch.craftURL(params.isCityOrZip, params.isLatAndLon))
-//     .then((res) => res.json())
-//     .then((data) => {
-//       const nameOfPlace = data.name
-//       const tempInF = data.main.temp
-//       const secondsTillSunset = data.sys.sunset - data.dt
-//       const hoursTillSunset = Math.floor(secondsTillSunset / 3600)
-//       const minutesTillSunset = Math.floor(((secondsTillSunset / 3600) - hoursTillSunset) * 60)
-//       let previousEntryMessage = `Below is information for ${nameOfPlace} based on your last visit!`
-//       let temperatureMessage = `Temperature in Fahrenheit: ${tempInF}`
-//       let sunsetMessage = `Time until sunset: ${hoursTillSunset} hours, ${minutesTillSunset} minutes`
-//       const allMessages = new DOMInteraction()
-//       allMessages.addContentToUl(previousEntryMessage)
-//       allMessages.addContentToUl(temperatureMessage)
-//       allMessages.addContentToUl(sunsetMessage)
-
-//     })
-// }
-
 class Search {
   constructor () {
     this.baseURL = 'http://api.openweathermap.org/data/2.5/weather?'
@@ -37,17 +12,6 @@ class Search {
     this.fahrenheit_units = '&units=imperial'
     this.input_value = document.querySelector('.input').value
     localStorage.setItem('last_query', this.input_value)
-  }
-
-  craftURL (isCityOrZip, isLatAndLon) {
-    if (isCityOrZip) {
-      FETCH_URL = this.baseURL + this.city_or_zip_parameter + this.input_value + this.fahrenheit_units + APP_ID
-      return FETCH_URL
-    }
-    else if (isLatAndLon) {
-      FETCH_URL = this.baseURL + this.lat_parameter + LAT + this.lon_parameter + LON + this.fahrenheit_units + APP_ID
-      return FETCH_URL
-    }
   }
 
   /**
@@ -71,6 +35,17 @@ class Search {
       allMessages.addContentToUl(temperatureMessage)
       allMessages.addContentToUl(sunsetMessage)
     })
+  }
+
+  craftURL (isCityOrZip, isLatAndLon) {
+    if (isCityOrZip) {
+      FETCH_URL = this.baseURL + this.city_or_zip_parameter + this.input_value + this.fahrenheit_units + APP_ID
+      return FETCH_URL
+    }
+    else if (isLatAndLon) {
+      FETCH_URL = this.baseURL + this.lat_parameter + LAT + this.lon_parameter + LON + this.fahrenheit_units + APP_ID
+      return FETCH_URL
+    }
   }
 }
 
@@ -118,7 +93,8 @@ class Geolocation {
     LAT = position.coords.latitude
     LON = position.coords.longitude
     console.log(LAT, LON)
-    searchAPI({ isLatAndLon: true })
+    const userLocationSearch = new Search()
+    userLocationSearch.searchAPI({ isLatAndLon: true })
   }
 }
 
@@ -137,13 +113,13 @@ const getPreviousResults = () => {
 }
 
 const getUserLocationByGeo = () => {
-  const userLocation = new Geolocation()
-  userLocation.getLocation()
+  const userLocationSearch = new Geolocation()
+  userLocationSearch.getLocation()
 }
 
 const getUserLocationByCityOrZip = () => {
-  const userLocation = new Search()
-  userLocation.searchAPI()
+  const userLocationSearch = new Search()
+  userLocationSearch.searchAPI()
 }
 
 document.addEventListener('DOMContentLoaded', getPreviousResults)
