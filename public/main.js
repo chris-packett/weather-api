@@ -3,71 +3,71 @@ let LAT
 let LON
 let FETCH_URL
 
-const craftURL = (isCityOrZip, isLatAndLon) => {
-  const _baseURL = 'http://api.openweathermap.org/data/2.5/weather?'
-  const _city_or_zip_parameter = 'q='
-  const _lat_parameter = 'lat='
-  const _lon_parameter = '&lon='
-  const _fahrenheit_units = '&units=imperial'
-  let inputValue = document.querySelector('.input').value
-  localStorage.setItem('last_query', inputValue)
-  if (isCityOrZip) {
-    let FETCH_URL = _baseURL + _city_or_zip_parameter + inputValue + _fahrenheit_units + APP_ID
-    return FETCH_URL
-  }
-  else if (isLatAndLon) {
-    let FETCH_URL = _baseURL + _lat_parameter + LAT + _lon_parameter + LON + _fahrenheit_units + APP_ID
-    return FETCH_URL
-  }
-}
+// const craftURL = (isCityOrZip, isLatAndLon) => {
+//   const _baseURL = 'http://api.openweathermap.org/data/2.5/weather?'
+//   const _city_or_zip_parameter = 'q='
+//   const _lat_parameter = 'lat='
+//   const _lon_parameter = '&lon='
+//   const _fahrenheit_units = '&units=imperial'
+//   let inputValue = document.querySelector('.input').value
+//   if (isCityOrZip) {
+//     let FETCH_URL = _baseURL + _city_or_zip_parameter + inputValue + _fahrenheit_units + APP_ID
+//     return FETCH_URL
+//   }
+//   else if (isLatAndLon) {
+//     let FETCH_URL = _baseURL + _lat_parameter + LAT + _lon_parameter + LON + _fahrenheit_units + APP_ID
+//     return FETCH_URL
+//   }
+//   localStorage.setItem('last_query', inputValue)
+// }
 
 /**
  * @param {} params - defines what url to create
  */
 const searchAPI = (params) => {
   params = params || { isCityOrZip: true }
-  fetch(craftURL(params.isCityOrZip, params.isLatAndLon))
+  const newSearch = new Search()
+  fetch(newSearch.craftURL(params.isCityOrZip, params.isLatAndLon))
     .then((res) => res.json())
     .then((data) => {
+      const nameOfPlace = data.name
       const tempInF = data.main.temp
       const secondsTillSunset = data.sys.sunset - data.dt
       const hoursTillSunset = Math.floor(secondsTillSunset / 3600)
       const minutesTillSunset = Math.floor(((secondsTillSunset / 3600) - hoursTillSunset) * 60)
+      let previousEntryMessage = `Below is information for ${nameOfPlace} based on your last visit!`
       let temperatureMessage = `Temperature in Fahrenheit: ${tempInF}`
       let sunsetMessage = `Time until sunset: ${hoursTillSunset} hours, ${minutesTillSunset} minutes`
       const allMessages = new DOMInteraction()
+      allMessages.addContentToUl(previousEntryMessage)
       allMessages.addContentToUl(temperatureMessage)
       allMessages.addContentToUl(sunsetMessage)
 
     })
 }
 
-// const populateOnPageLoad = () => {
-//   if (localStorage.getItem('last_query')) {
-//     const _last_query = localStorage.getItem('last_query')
-//     const _baseURL = 'http://api.openweathermap.org/data/2.5/weather?'
-//     const _city_or_zip_parameter = 'q='
-//     const _fahrenheit_units = '&units=imperial'
-//     let _last_fetch_url = _baseURL + _city_or_zip_parameter + _last_query + _fahrenheit_units + APP_ID
+class Search {
+  constructor () {
+    this.baseURL = 'http://api.openweathermap.org/data/2.5/weather?'
+    this.city_or_zip_parameter = 'q='
+    this.lat_parameter = 'lat='
+    this.lon_parameter = '&lon='
+    this.fahrenheit_units = '&units=imperial'
+    this.input_value = document.querySelector('.input').value
+    localStorage.setItem('last_query', this.input_value)
+  }
 
-//     fetch(_last_fetch_url)
-//       .then((res) => res.json())
-//       .then((data) => {
-//         const nameOfPlace = data.name
-//         const tempInF = data.main.temp
-//         const secondsTillSunset = data.sys.sunset - data.dt
-//         const hoursTillSunset = Math.floor(secondsTillSunset / 3600)
-//         const minutesTillSunset = Math.floor(((secondsTillSunset / 3600) - hoursTillSunset) * 60)
-//         let previousEntryMessage = `Below is information for ${nameOfPlace} based on your last visit!`
-//         let temperatureMessage = `Temperature in Fahrenheit: ${tempInF}`
-//         let sunsetMessage = `Time until sunset: ${hoursTillSunset} hours, ${minutesTillSunset} minutes`
-//         const allMessages = new DOMInteraction()
-//         allMessages.addContentToUl(previousEntryMessage)
-//         allMessages.addContentToUl(temperatureMessage)
-//         allMessages.addContentToUl(sunsetMessage)
-//       })
-//   }
-// }
+  craftURL (isCityOrZip, isLatAndLon) {
+    if (isCityOrZip) {
+      FETCH_URL = this.baseURL + this.city_or_zip_parameter + this.input_value + this.fahrenheit_units + APP_ID
+      return FETCH_URL
+    }
+    else if (isLatAndLon) {
+      FETCH_URL = this.baseURL + this.lat_parameter + LAT + this.lon_parameter + LON + this.fahrenheit_units + APP_ID
+      return FETCH_URL
+    }
+  }
+}
 
 class PageLoad {
   constructor (lastQuery) {
@@ -79,14 +79,7 @@ class PageLoad {
   }
 
   populateOnPageLoad () {
-    // if (localStorage.getItem(this.last_query)) {
-      // const _last_query = localStorage.getItem(this.last_query)
-      // const _baseURL = 'http://api.openweathermap.org/data/2.5/weather?'
-      // const _city_or_zip_parameter = 'q='
-      // const _fahrenheit_units = '&units=imperial'
-      // let _last_fetch_url = _baseURL + _city_or_zip_parameter + _last_query + _fahrenheit_units + APP_ID
     if (this.last_query) {
-      console.log("Hi there!")
       fetch(this.last_fetch_URL)
       .then((res) => res.json())
       .then((data) => {
@@ -124,14 +117,6 @@ class Geolocation {
   }
 }
 
-class UserInput {
-
-}
-
-class UrlStructure {
-
-}
-
 class DOMInteraction {
   addContentToUl(message) {
     let weatherOutputParent = document.querySelector('.weather-output')
@@ -148,11 +133,6 @@ const getPreviousResults = () => {
 
 const getUserLocation = () => {
   const userLocation = new Geolocation()
-  userLocation.getLocation()
-}
-
-const getUserInput = () => {
-  const userLocation = new UserInput()
   userLocation.getLocation()
 }
 
