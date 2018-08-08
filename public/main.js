@@ -18,7 +18,9 @@ class Search {
   ** @param {} params - defines what url to create
   **/
   searchAPI (params) {
-    params = params || { isCityOrZip: true }
+    params = params || { 
+      isCityOrZip: true 
+    }
     fetch(this.craftURL(params.isCityOrZip, params.isLatAndLon))
     .then((res) => res.json())
     .then((data) => {
@@ -31,6 +33,7 @@ class Search {
       let temperatureMessage = `Temperature in Fahrenheit: ${tempInF}`
       let sunsetMessage = `Time until sunset: ${hoursTillSunset} hours, ${minutesTillSunset} minutes`
       const allMessages = new DOMInteraction()
+      document.querySelector('.weather-output').textContent = ''
       allMessages.addContentToUl(previousEntryMessage)
       allMessages.addContentToUl(temperatureMessage)
       allMessages.addContentToUl(sunsetMessage)
@@ -60,6 +63,7 @@ class PageLoad {
 
   populateOnPageLoad () {
     if (this.last_query) {
+      //goal: new Search().searchAPI(params)
       fetch(this.last_fetch_URL)
       .then((res) => res.json())
       .then((data) => {
@@ -107,22 +111,24 @@ class DOMInteraction {
   }
 }
 
-const getPreviousResults = () => {
+const getUserPreviousResult = () => {
   const previousLocation = new PageLoad('last_query')
   previousLocation.populateOnPageLoad()
 }
 
 const getUserLocationByGeo = () => {
+  document.querySelector('.weather-output').textContent = 'Finding your local weather information...'
   const userLocationSearch = new Geolocation()
   userLocationSearch.getLocation()
 }
 
 const getUserLocationByCityOrZip = () => {
+  document.querySelector('.weather-output').textContent = ''
   const userLocationSearch = new Search()
   userLocationSearch.searchAPI()
 }
 
-document.addEventListener('DOMContentLoaded', getPreviousResults)
+document.addEventListener('DOMContentLoaded', getUserPreviousResult)
 document.querySelector('.get-lat-and-lon').addEventListener('click', getUserLocationByGeo)
 document.querySelector('.get-city-or-zip').addEventListener('click', getUserLocationByCityOrZip)
 
