@@ -71,26 +71,33 @@ const searchAPI = () => {
     })
 }
 
-const getLocation = () => {
-  isLatAndLon = true
-  isCityOrZip = false
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(showPosition)
-  } else {
-    console.log("Geolocation is not supported by this browser.")
+class Geolocation {
+  getLocation () {
+    isLatAndLon = true
+    isCityOrZip = false
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(this.showPosition)
+    } else {
+      console.log("Geolocation is not supported by this browser.")
+    }
+  }
+
+  showPosition (position) {
+    LAT = position.coords.latitude
+    LON = position.coords.longitude
+    console.log(LAT, LON)
+    searchAPI()
+    isLatAndLon = false
+    isCityOrZip = true
   }
 }
 
-const showPosition = (position) => {
-  LAT = position.coords.latitude
-  LON = position.coords.longitude
-  console.log(LAT, LON)
-  searchAPI()
-  isLatAndLon = false
-  isCityOrZip = true
+const getUserLocation = () => {
+  const userLocation = new Geolocation
+  userLocation.getLocation()
 }
 
 document.addEventListener('DOMContentLoaded', populateOnPageLoad)
 document.querySelector('.get-city-or-zip').addEventListener('click', searchAPI)
-document.querySelector('.get-lat-and-lon').addEventListener('click', getLocation)
+document.querySelector('.get-lat-and-lon').addEventListener('click', getUserLocation)
 
