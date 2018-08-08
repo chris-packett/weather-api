@@ -3,48 +3,30 @@ let LAT
 let LON
 let FETCH_URL
 
-// const craftURL = (isCityOrZip, isLatAndLon) => {
-//   const _baseURL = 'http://api.openweathermap.org/data/2.5/weather?'
-//   const _city_or_zip_parameter = 'q='
-//   const _lat_parameter = 'lat='
-//   const _lon_parameter = '&lon='
-//   const _fahrenheit_units = '&units=imperial'
-//   let inputValue = document.querySelector('.input').value
-//   if (isCityOrZip) {
-//     let FETCH_URL = _baseURL + _city_or_zip_parameter + inputValue + _fahrenheit_units + APP_ID
-//     return FETCH_URL
-//   }
-//   else if (isLatAndLon) {
-//     let FETCH_URL = _baseURL + _lat_parameter + LAT + _lon_parameter + LON + _fahrenheit_units + APP_ID
-//     return FETCH_URL
-//   }
-//   localStorage.setItem('last_query', inputValue)
-// }
-
-/**
+/*
  * @param {} params - defines what url to create
  */
-const searchAPI = (params) => {
-  params = params || { isCityOrZip: true }
-  const newSearch = new Search()
-  fetch(newSearch.craftURL(params.isCityOrZip, params.isLatAndLon))
-    .then((res) => res.json())
-    .then((data) => {
-      const nameOfPlace = data.name
-      const tempInF = data.main.temp
-      const secondsTillSunset = data.sys.sunset - data.dt
-      const hoursTillSunset = Math.floor(secondsTillSunset / 3600)
-      const minutesTillSunset = Math.floor(((secondsTillSunset / 3600) - hoursTillSunset) * 60)
-      let previousEntryMessage = `Below is information for ${nameOfPlace} based on your last visit!`
-      let temperatureMessage = `Temperature in Fahrenheit: ${tempInF}`
-      let sunsetMessage = `Time until sunset: ${hoursTillSunset} hours, ${minutesTillSunset} minutes`
-      const allMessages = new DOMInteraction()
-      allMessages.addContentToUl(previousEntryMessage)
-      allMessages.addContentToUl(temperatureMessage)
-      allMessages.addContentToUl(sunsetMessage)
+// const searchAPI = (params) => {
+//   params = params || { isCityOrZip: true }
+//   const newSearch = new Search()
+//   fetch(newSearch.craftURL(params.isCityOrZip, params.isLatAndLon))
+//     .then((res) => res.json())
+//     .then((data) => {
+//       const nameOfPlace = data.name
+//       const tempInF = data.main.temp
+//       const secondsTillSunset = data.sys.sunset - data.dt
+//       const hoursTillSunset = Math.floor(secondsTillSunset / 3600)
+//       const minutesTillSunset = Math.floor(((secondsTillSunset / 3600) - hoursTillSunset) * 60)
+//       let previousEntryMessage = `Below is information for ${nameOfPlace} based on your last visit!`
+//       let temperatureMessage = `Temperature in Fahrenheit: ${tempInF}`
+//       let sunsetMessage = `Time until sunset: ${hoursTillSunset} hours, ${minutesTillSunset} minutes`
+//       const allMessages = new DOMInteraction()
+//       allMessages.addContentToUl(previousEntryMessage)
+//       allMessages.addContentToUl(temperatureMessage)
+//       allMessages.addContentToUl(sunsetMessage)
 
-    })
-}
+//     })
+// }
 
 class Search {
   constructor () {
@@ -66,6 +48,29 @@ class Search {
       FETCH_URL = this.baseURL + this.lat_parameter + LAT + this.lon_parameter + LON + this.fahrenheit_units + APP_ID
       return FETCH_URL
     }
+  }
+
+  /**
+  ** @param {} params - defines what url to create
+  **/
+  searchAPI (params) {
+    params = params || { isCityOrZip: true }
+    fetch(this.craftURL(params.isCityOrZip, params.isLatAndLon))
+    .then((res) => res.json())
+    .then((data) => {
+      const nameOfPlace = data.name
+      const tempInF = data.main.temp
+      const secondsTillSunset = data.sys.sunset - data.dt
+      const hoursTillSunset = Math.floor(secondsTillSunset / 3600)
+      const minutesTillSunset = Math.floor(((secondsTillSunset / 3600) - hoursTillSunset) * 60)
+      let previousEntryMessage = `Below is information for ${nameOfPlace}`
+      let temperatureMessage = `Temperature in Fahrenheit: ${tempInF}`
+      let sunsetMessage = `Time until sunset: ${hoursTillSunset} hours, ${minutesTillSunset} minutes`
+      const allMessages = new DOMInteraction()
+      allMessages.addContentToUl(previousEntryMessage)
+      allMessages.addContentToUl(temperatureMessage)
+      allMessages.addContentToUl(sunsetMessage)
+    })
   }
 }
 
@@ -131,12 +136,17 @@ const getPreviousResults = () => {
   previousLocation.populateOnPageLoad()
 }
 
-const getUserLocation = () => {
+const getUserLocationByGeo = () => {
   const userLocation = new Geolocation()
   userLocation.getLocation()
 }
 
+const getUserLocationByCityOrZip = () => {
+  const userLocation = new Search()
+  userLocation.searchAPI()
+}
+
 document.addEventListener('DOMContentLoaded', getPreviousResults)
-document.querySelector('.get-city-or-zip').addEventListener('click', () => { searchAPI() })
-document.querySelector('.get-lat-and-lon').addEventListener('click', getUserLocation)
+document.querySelector('.get-lat-and-lon').addEventListener('click', getUserLocationByGeo)
+document.querySelector('.get-city-or-zip').addEventListener('click', getUserLocationByCityOrZip)
 
